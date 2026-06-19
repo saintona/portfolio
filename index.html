@@ -1,422 +1,405 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2487.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000; min-height: 14.0px}
-    span.s1 {font-kerning: none}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grid Menu</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  background:#fff;
+  overflow:hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* GRID */
+#grid{
+  position:fixed;
+  inset:0;
+  display:grid;
+  pointer-events:none;
+}
+
+.tile{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.dot{
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:#000;
+  opacity:0;
+  transition:opacity 0.8s ease;
+}
+
+/* ENTER */
+#enterScreen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
+  transition:opacity 0.6s ease, transform 0.6s ease;
+}
+
+.button{
+  width:240px;
+  height:120px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:18px;
+  background:rgba(255,255,255,0.35);
+  border:1px solid rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+
+  font-size:18px;
+  letter-spacing:0.2em;
+  text-transform:lowercase;
+
+  cursor:pointer;
+}
+
+/* MENU */
+#menu{
+  position:fixed;
+  inset:0;
+  display:flex;
+
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+
+  opacity:0;
+  transform:scale(0.95);
+  transition:opacity 0.6s ease, transform 0.6s ease;
+
+  pointer-events:none;
+}
+
+#menu::-webkit-scrollbar{display:none;}
+
+#menu.active{
+  opacity:1;
+  transform:scale(1);
+  pointer-events:auto;
+}
+
+.item{
+  min-width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  scroll-snap-align:center;
+}
+
+/* SUBTEXT */
+#subtext{
+  position:fixed;
+  left:50%;
+  bottom:28%;
+  transform:translateX(-50%);
+
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:0.05em;
+
+  opacity:0;
+  color:#000;
+
+  pointer-events:none;
+  transition:opacity 0.4s ease;
+}
+
+/* MODAL */
+#modal{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.4s ease;
+}
+
+#modal.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.modal-box{
+  width:90%;
+  height:85%;
+
+  border-radius:28px;
+  background:rgba(0,0,0,0.35);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+
+  border:1px solid rgba(255,255,255,0.12);
+
+  overflow-y:auto;
+  padding:20px;
+
+  transform:scale(0.92);
+  transition:transform 0.4s ease;
+}
+
+#modal.active .modal-box{
+  transform:scale(1);
+}
+
+.modal-box::-webkit-scrollbar{
+  display:none;
+}
+
+/* IMAGES */
+.art-img{
+  width:100%;
+  height:320px;
+  object-fit:cover;
+
+  border-radius:18px;
+  margin-bottom:16px;
+
+  cursor:pointer;
+}
+
+/* AUDIO */
+.audio-item{
+  width:100%;
+  margin-bottom:16px;
+}
+
+audio{
+  width:100%;
+  border-radius:12px;
+}
+
+/* VIEWER */
+#viewer{
+  position:fixed;
+  inset:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:rgba(0,0,0,0.6);
+  backdrop-filter: blur(18px);
+
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s ease;
+}
+
+#viewer.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+#viewer img{
+  max-width:90%;
+  max-height:90%;
+  object-fit:contain;
+  border-radius:18px;
+}
+</style>
 </head>
+
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;title&gt;Grid Menu&lt;/title&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;style&gt;</span></p>
-<p class="p1"><span class="s1">*{</span></p>
-<p class="p1"><span class="s1">  margin:0;</span></p>
-<p class="p1"><span class="s1">  padding:0;</span></p>
-<p class="p1"><span class="s1">  box-sizing:border-box;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">html,body{</span></p>
-<p class="p1"><span class="s1">  width:100%;</span></p>
-<p class="p1"><span class="s1">  height:100%;</span></p>
-<p class="p1"><span class="s1">  background:#fff;</span></p>
-<p class="p1"><span class="s1">  overflow:hidden;</span></p>
-<p class="p1"><span class="s1">  font-family: Arial, sans-serif;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* GRID */</span></p>
-<p class="p1"><span class="s1">#grid{</span></p>
-<p class="p1"><span class="s1">  position:fixed;</span></p>
-<p class="p1"><span class="s1">  inset:0;</span></p>
-<p class="p1"><span class="s1">  display:grid;</span></p>
-<p class="p1"><span class="s1">  pointer-events:none;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.tile{</span></p>
-<p class="p1"><span class="s1">  display:flex;</span></p>
-<p class="p1"><span class="s1">  align-items:center;</span></p>
-<p class="p1"><span class="s1">  justify-content:center;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.dot{</span></p>
-<p class="p1"><span class="s1">  width:4px;</span></p>
-<p class="p1"><span class="s1">  height:4px;</span></p>
-<p class="p1"><span class="s1">  border-radius:50%;</span></p>
-<p class="p1"><span class="s1">  background:#000;</span></p>
-<p class="p1"><span class="s1">  opacity:0;</span></p>
-<p class="p1"><span class="s1">  transition:opacity 0.8s ease;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* ENTER */</span></p>
-<p class="p1"><span class="s1">#enterScreen{</span></p>
-<p class="p1"><span class="s1">  position:fixed;</span></p>
-<p class="p1"><span class="s1">  inset:0;</span></p>
-<p class="p1"><span class="s1">  display:flex;</span></p>
-<p class="p1"><span class="s1">  align-items:center;</span></p>
-<p class="p1"><span class="s1">  justify-content:center;</span></p>
-<p class="p1"><span class="s1">  z-index:10;</span></p>
-<p class="p1"><span class="s1">  transition:opacity 0.6s ease, transform 0.6s ease;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.button{</span></p>
-<p class="p1"><span class="s1">  width:240px;</span></p>
-<p class="p1"><span class="s1">  height:120px;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  display:flex;</span></p>
-<p class="p1"><span class="s1">  align-items:center;</span></p>
-<p class="p1"><span class="s1">  justify-content:center;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  border-radius:18px;</span></p>
-<p class="p1"><span class="s1">  background:rgba(255,255,255,0.35);</span></p>
-<p class="p1"><span class="s1">  border:1px solid rgba(0,0,0,0.15);</span></p>
-<p class="p1"><span class="s1">  backdrop-filter: blur(10px);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  font-size:18px;</span></p>
-<p class="p1"><span class="s1">  letter-spacing:0.2em;</span></p>
-<p class="p1"><span class="s1">  text-transform:lowercase;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  cursor:pointer;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* MENU */</span></p>
-<p class="p1"><span class="s1">#menu{</span></p>
-<p class="p1"><span class="s1">  position:fixed;</span></p>
-<p class="p1"><span class="s1">  inset:0;</span></p>
-<p class="p1"><span class="s1">  display:flex;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  overflow-x:auto;</span></p>
-<p class="p1"><span class="s1">  scroll-snap-type:x mandatory;</span></p>
-<p class="p1"><span class="s1">  scrollbar-width:none;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  opacity:0;</span></p>
-<p class="p1"><span class="s1">  transform:scale(0.95);</span></p>
-<p class="p1"><span class="s1">  transition:opacity 0.6s ease, transform 0.6s ease;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  pointer-events:none;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">#menu::-webkit-scrollbar{display:none;}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">#menu.active{</span></p>
-<p class="p1"><span class="s1">  opacity:1;</span></p>
-<p class="p1"><span class="s1">  transform:scale(1);</span></p>
-<p class="p1"><span class="s1">  pointer-events:auto;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.item{</span></p>
-<p class="p1"><span class="s1">  min-width:100%;</span></p>
-<p class="p1"><span class="s1">  height:100%;</span></p>
-<p class="p1"><span class="s1">  display:flex;</span></p>
-<p class="p1"><span class="s1">  align-items:center;</span></p>
-<p class="p1"><span class="s1">  justify-content:center;</span></p>
-<p class="p1"><span class="s1">  scroll-snap-align:center;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* SUBTEXT */</span></p>
-<p class="p1"><span class="s1">#subtext{</span></p>
-<p class="p1"><span class="s1">  position:fixed;</span></p>
-<p class="p1"><span class="s1">  left:50%;</span></p>
-<p class="p1"><span class="s1">  bottom:28%;</span></p>
-<p class="p1"><span class="s1">  transform:translateX(-50%);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  font-size:12px;</span></p>
-<p class="p1"><span class="s1">  font-weight:700;</span></p>
-<p class="p1"><span class="s1">  letter-spacing:0.05em;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  opacity:0;</span></p>
-<p class="p1"><span class="s1">  color:#000;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  pointer-events:none;</span></p>
-<p class="p1"><span class="s1">  transition:opacity 0.4s ease;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* MODAL */</span></p>
-<p class="p1"><span class="s1">#modal{</span></p>
-<p class="p1"><span class="s1">  position:fixed;</span></p>
-<p class="p1"><span class="s1">  inset:0;</span></p>
-<p class="p1"><span class="s1">  display:flex;</span></p>
-<p class="p1"><span class="s1">  align-items:center;</span></p>
-<p class="p1"><span class="s1">  justify-content:center;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  opacity:0;</span></p>
-<p class="p1"><span class="s1">  pointer-events:none;</span></p>
-<p class="p1"><span class="s1">  transition:opacity 0.4s ease;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">#modal.active{</span></p>
-<p class="p1"><span class="s1">  opacity:1;</span></p>
-<p class="p1"><span class="s1">  pointer-events:auto;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.modal-box{</span></p>
-<p class="p1"><span class="s1">  width:90%;</span></p>
-<p class="p1"><span class="s1">  height:85%;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  border-radius:28px;</span></p>
-<p class="p1"><span class="s1">  background:rgba(0,0,0,0.35);</span></p>
-<p class="p1"><span class="s1">  backdrop-filter: blur(22px);</span></p>
-<p class="p1"><span class="s1">  -webkit-backdrop-filter: blur(22px);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  border:1px solid rgba(255,255,255,0.12);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  overflow-y:auto;</span></p>
-<p class="p1"><span class="s1">  padding:20px;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  transform:scale(0.92);</span></p>
-<p class="p1"><span class="s1">  transition:transform 0.4s ease;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">#modal.active .modal-box{</span></p>
-<p class="p1"><span class="s1">  transform:scale(1);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.modal-box::-webkit-scrollbar{</span></p>
-<p class="p1"><span class="s1">  display:none;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* IMAGES */</span></p>
-<p class="p1"><span class="s1">.art-img{</span></p>
-<p class="p1"><span class="s1">  width:100%;</span></p>
-<p class="p1"><span class="s1">  height:320px;</span></p>
-<p class="p1"><span class="s1">  object-fit:cover;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  border-radius:18px;</span></p>
-<p class="p1"><span class="s1">  margin-bottom:16px;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  cursor:pointer;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* AUDIO */</span></p>
-<p class="p1"><span class="s1">.audio-item{</span></p>
-<p class="p1"><span class="s1">  width:100%;</span></p>
-<p class="p1"><span class="s1">  margin-bottom:16px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">audio{</span></p>
-<p class="p1"><span class="s1">  width:100%;</span></p>
-<p class="p1"><span class="s1">  border-radius:12px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* VIEWER */</span></p>
-<p class="p1"><span class="s1">#viewer{</span></p>
-<p class="p1"><span class="s1">  position:fixed;</span></p>
-<p class="p1"><span class="s1">  inset:0;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  display:flex;</span></p>
-<p class="p1"><span class="s1">  align-items:center;</span></p>
-<p class="p1"><span class="s1">  justify-content:center;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  background:rgba(0,0,0,0.6);</span></p>
-<p class="p1"><span class="s1">  backdrop-filter: blur(18px);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  opacity:0;</span></p>
-<p class="p1"><span class="s1">  pointer-events:none;</span></p>
-<p class="p1"><span class="s1">  transition:opacity 0.3s ease;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">#viewer.active{</span></p>
-<p class="p1"><span class="s1">  opacity:1;</span></p>
-<p class="p1"><span class="s1">  pointer-events:auto;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">#viewer img{</span></p>
-<p class="p1"><span class="s1">  max-width:90%;</span></p>
-<p class="p1"><span class="s1">  max-height:90%;</span></p>
-<p class="p1"><span class="s1">  object-fit:contain;</span></p>
-<p class="p1"><span class="s1">  border-radius:18px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;div id="grid"&gt;&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;!-- ENTER --&gt;</span></p>
-<p class="p1"><span class="s1">&lt;div id="enterScreen"&gt;</span></p>
-<p class="p1"><span class="s1">  &lt;div class="button" id="enterBtn"&gt;enter&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;!-- MENU --&gt;</span></p>
-<p class="p1"><span class="s1">&lt;div id="menu"&gt;</span></p>
-<p class="p1"><span class="s1">  &lt;div class="item"&gt;&lt;div class="button" id="artBtn"&gt;art&lt;/div&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">  &lt;div class="item"&gt;&lt;div class="button" id="fashionBtn"&gt;fashion&lt;/div&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">  &lt;div class="item"&gt;&lt;div class="button" id="musicBtn"&gt;music&lt;/div&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;!-- SUBTEXT --&gt;</span></p>
-<p class="p1"><span class="s1">&lt;div id="subtext"&gt;swipe for next / previous medium&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;!-- MODAL --&gt;</span></p>
-<p class="p1"><span class="s1">&lt;div id="modal"&gt;</span></p>
-<p class="p1"><span class="s1">  &lt;div class="modal-box" id="gallery"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;!-- VIEWER --&gt;</span></p>
-<p class="p1"><span class="s1">&lt;div id="viewer"&gt;</span></p>
-<p class="p1"><span class="s1">  &lt;img id="viewerImg"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;script&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* GRID */</span></p>
-<p class="p1"><span class="s1">const grid = document.getElementById("grid");</span></p>
-<p class="p1"><span class="s1">const SIZE = 20;</span></p>
-<p class="p1"><span class="s1">const DENSITY = 0.08;</span></p>
-<p class="p1"><span class="s1">let dots = [];</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function buildGrid(){</span></p>
-<p class="p1"><span class="s1">  grid.innerHTML="";</span></p>
-<p class="p1"><span class="s1">  dots=[];</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  const cols = Math.ceil(window.innerWidth / SIZE);</span></p>
-<p class="p1"><span class="s1">  const rows = Math.ceil(window.innerHeight / SIZE);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  grid.style.gridTemplateColumns = `repeat(${cols}, ${SIZE}px)`;</span></p>
-<p class="p1"><span class="s1">  grid.style.gridTemplateRows = `repeat(${rows}, ${SIZE}px)`;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  for(let i=0;i&lt;cols*rows;i++){</span></p>
-<p class="p1"><span class="s1">    const tile=document.createElement("div");</span></p>
-<p class="p1"><span class="s1">    tile.className="tile";</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    const dot=document.createElement("div");</span></p>
-<p class="p1"><span class="s1">    dot.className="dot";</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    tile.appendChild(dot);</span></p>
-<p class="p1"><span class="s1">    grid.appendChild(tile);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    dots.push(dot);</span></p>
-<p class="p1"><span class="s1">  }</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function updateGrid(){</span></p>
-<p class="p1"><span class="s1">  dots.forEach(d=&gt;{</span></p>
-<p class="p1"><span class="s1">    d.style.opacity = Math.random() &lt; DENSITY ? 0.5 : 0;</span></p>
-<p class="p1"><span class="s1">  });</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">setInterval(updateGrid,2000);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* ENTER */</span></p>
-<p class="p1"><span class="s1">const enterBtn = document.getElementById("enterBtn");</span></p>
-<p class="p1"><span class="s1">const enterScreen = document.getElementById("enterScreen");</span></p>
-<p class="p1"><span class="s1">const menu = document.getElementById("menu");</span></p>
-<p class="p1"><span class="s1">const subtext = document.getElementById("subtext");</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">enterBtn.onclick = () =&gt; {</span></p>
-<p class="p1"><span class="s1">  enterScreen.style.opacity = "0";</span></p>
-<p class="p1"><span class="s1">  enterScreen.style.transform = "scale(1.05)";</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  setTimeout(() =&gt; {</span></p>
-<p class="p1"><span class="s1">    enterScreen.style.display = "none";</span></p>
-<p class="p1"><span class="s1">    menu.classList.add("active");</span></p>
-<p class="p1"><span class="s1">    subtext.style.opacity = "0.5";</span></p>
-<p class="p1"><span class="s1">  }, 600);</span></p>
-<p class="p1"><span class="s1">};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* DATA */</span></p>
-<p class="p1"><span class="s1">const artImages = [</span></p>
-<p class="p1"><span class="s1">  "1art.jpg","2art.jpg","3art.jpg","4art.jpg","5art.jpg",</span></p>
-<p class="p1"><span class="s1">  "6art.jpg","7art.jpg","8art.jpg","9art.jpg","10art.jpg"</span></p>
-<p class="p1"><span class="s1">];</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">const fashionImages = [</span></p>
-<p class="p1"><span class="s1">  "1fashion.jpg","2fashion.jpg","3fashion.jpg","4fashion.jpg","5fashion.jpg",</span></p>
-<p class="p1"><span class="s1">  "6fashion.jpg","7fashion.jpg","8fashion.jpg","9fashion.jpg","10fashion.jpg"</span></p>
-<p class="p1"><span class="s1">];</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">const musicTracks = [</span></p>
-<p class="p1"><span class="s1">  "1music.mp3","2music.mp3","3music.mp3","4music.mp3","5music.mp3",</span></p>
-<p class="p1"><span class="s1">  "6music.mp3","7music.mp3","8music.mp3","9music.mp3","10music.mp3"</span></p>
-<p class="p1"><span class="s1">];</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* ELEMENTS */</span></p>
-<p class="p1"><span class="s1">const artBtn = document.getElementById("artBtn");</span></p>
-<p class="p1"><span class="s1">const fashionBtn = document.getElementById("fashionBtn");</span></p>
-<p class="p1"><span class="s1">const musicBtn = document.getElementById("musicBtn");</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">const modal = document.getElementById("modal");</span></p>
-<p class="p1"><span class="s1">const gallery = document.getElementById("gallery");</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">const viewer = document.getElementById("viewer");</span></p>
-<p class="p1"><span class="s1">const viewerImg = document.getElementById("viewerImg");</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* IMAGE GALLERY */</span></p>
-<p class="p1"><span class="s1">function openGallery(images){</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  gallery.innerHTML="";</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  images.forEach(src=&gt;{</span></p>
-<p class="p1"><span class="s1">    const img=document.createElement("img");</span></p>
-<p class="p1"><span class="s1">    img.src=src;</span></p>
-<p class="p1"><span class="s1">    img.className="art-img";</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    img.onclick=()=&gt;{</span></p>
-<p class="p1"><span class="s1">      viewerImg.src=src;</span></p>
-<p class="p1"><span class="s1">      viewer.classList.add("active");</span></p>
-<p class="p1"><span class="s1">    };</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    gallery.appendChild(img);</span></p>
-<p class="p1"><span class="s1">  });</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  modal.classList.add("active");</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* MUSIC GALLERY */</span></p>
-<p class="p1"><span class="s1">function openMusic(tracks){</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  gallery.innerHTML="";</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  tracks.forEach(src=&gt;{</span></p>
-<p class="p1"><span class="s1">    const wrap=document.createElement("div");</span></p>
-<p class="p1"><span class="s1">    wrap.className="audio-item";</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    const audio=document.createElement("audio");</span></p>
-<p class="p1"><span class="s1">    audio.controls=true;</span></p>
-<p class="p1"><span class="s1">    audio.src=src;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    wrap.appendChild(audio);</span></p>
-<p class="p1"><span class="s1">    gallery.appendChild(wrap);</span></p>
-<p class="p1"><span class="s1">  });</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">  modal.classList.add("active");</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* BUTTONS */</span></p>
-<p class="p1"><span class="s1">artBtn.onclick = () =&gt; openGallery(artImages);</span></p>
-<p class="p1"><span class="s1">fashionBtn.onclick = () =&gt; openGallery(fashionImages);</span></p>
-<p class="p1"><span class="s1">musicBtn.onclick = () =&gt; openMusic(musicTracks);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* CLOSE MODAL */</span></p>
-<p class="p1"><span class="s1">modal.onclick = (e)=&gt;{</span></p>
-<p class="p1"><span class="s1">  if(e.target === modal){</span></p>
-<p class="p1"><span class="s1">    modal.classList.remove("active");</span></p>
-<p class="p1"><span class="s1">  }</span></p>
-<p class="p1"><span class="s1">};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* CLOSE VIEWER */</span></p>
-<p class="p1"><span class="s1">viewer.onclick = ()=&gt;{</span></p>
-<p class="p1"><span class="s1">  viewer.classList.remove("active");</span></p>
-<p class="p1"><span class="s1">};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">buildGrid();</span></p>
-<p class="p1"><span class="s1">updateGrid();</span></p>
-<p class="p1"><span class="s1">window.addEventListener("resize", buildGrid);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;/script&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+
+<div id="grid"></div>
+
+<!-- ENTER -->
+<div id="enterScreen">
+  <div class="button" id="enterBtn">enter</div>
+</div>
+
+<!-- MENU -->
+<div id="menu">
+  <div class="item"><div class="button" id="artBtn">art</div></div>
+  <div class="item"><div class="button" id="fashionBtn">fashion</div></div>
+  <div class="item"><div class="button" id="musicBtn">music</div></div>
+</div>
+
+<!-- SUBTEXT -->
+<div id="subtext">swipe for next / previous medium</div>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-box" id="gallery"></div>
+</div>
+
+<!-- VIEWER -->
+<div id="viewer">
+  <img id="viewerImg">
+</div>
+
+<script>
+
+/* GRID */
+const grid = document.getElementById("grid");
+const SIZE = 20;
+const DENSITY = 0.08;
+let dots = [];
+
+function buildGrid(){
+  grid.innerHTML="";
+  dots=[];
+
+  const cols = Math.ceil(window.innerWidth / SIZE);
+  const rows = Math.ceil(window.innerHeight / SIZE);
+
+  grid.style.gridTemplateColumns = `repeat(${cols}, ${SIZE}px)`;
+  grid.style.gridTemplateRows = `repeat(${rows}, ${SIZE}px)`;
+
+  for(let i=0;i<cols*rows;i++){
+    const tile=document.createElement("div");
+    tile.className="tile";
+
+    const dot=document.createElement("div");
+    dot.className="dot";
+
+    tile.appendChild(dot);
+    grid.appendChild(tile);
+
+    dots.push(dot);
+  }
+}
+
+function updateGrid(){
+  dots.forEach(d=>{
+    d.style.opacity = Math.random() < DENSITY ? 0.5 : 0;
+  });
+}
+
+setInterval(updateGrid,2000);
+
+/* ENTER */
+const enterBtn = document.getElementById("enterBtn");
+const enterScreen = document.getElementById("enterScreen");
+const menu = document.getElementById("menu");
+const subtext = document.getElementById("subtext");
+
+enterBtn.onclick = () => {
+  enterScreen.style.opacity = "0";
+  enterScreen.style.transform = "scale(1.05)";
+
+  setTimeout(() => {
+    enterScreen.style.display = "none";
+    menu.classList.add("active");
+    subtext.style.opacity = "0.5";
+  }, 600);
+};
+
+/* DATA */
+const artImages = [
+  "1art.jpg","2art.jpg","3art.jpg","4art.jpg","5art.jpg",
+  "6art.jpg","7art.jpg","8art.jpg","9art.jpg","10art.jpg"
+];
+
+const fashionImages = [
+  "1fashion.jpg","2fashion.jpg","3fashion.jpg","4fashion.jpg","5fashion.jpg",
+  "6fashion.jpg","7fashion.jpg","8fashion.jpg","9fashion.jpg","10fashion.jpg"
+];
+
+const musicTracks = [
+  "1music.mp3","2music.mp3","3music.mp3","4music.mp3","5music.mp3",
+  "6music.mp3","7music.mp3","8music.mp3","9music.mp3","10music.mp3"
+];
+
+/* ELEMENTS */
+const artBtn = document.getElementById("artBtn");
+const fashionBtn = document.getElementById("fashionBtn");
+const musicBtn = document.getElementById("musicBtn");
+
+const modal = document.getElementById("modal");
+const gallery = document.getElementById("gallery");
+
+const viewer = document.getElementById("viewer");
+const viewerImg = document.getElementById("viewerImg");
+
+/* IMAGE GALLERY */
+function openGallery(images){
+
+  gallery.innerHTML="";
+
+  images.forEach(src=>{
+    const img=document.createElement("img");
+    img.src=src;
+    img.className="art-img";
+
+    img.onclick=()=>{
+      viewerImg.src=src;
+      viewer.classList.add("active");
+    };
+
+    gallery.appendChild(img);
+  });
+
+  modal.classList.add("active");
+}
+
+/* MUSIC GALLERY */
+function openMusic(tracks){
+
+  gallery.innerHTML="";
+
+  tracks.forEach(src=>{
+    const wrap=document.createElement("div");
+    wrap.className="audio-item";
+
+    const audio=document.createElement("audio");
+    audio.controls=true;
+    audio.src=src;
+
+    wrap.appendChild(audio);
+    gallery.appendChild(wrap);
+  });
+
+  modal.classList.add("active");
+}
+
+/* BUTTONS */
+artBtn.onclick = () => openGallery(artImages);
+fashionBtn.onclick = () => openGallery(fashionImages);
+musicBtn.onclick = () => openMusic(musicTracks);
+
+/* CLOSE MODAL */
+modal.onclick = (e)=>{
+  if(e.target === modal){
+    modal.classList.remove("active");
+  }
+};
+
+/* CLOSE VIEWER */
+viewer.onclick = ()=>{
+  viewer.classList.remove("active");
+};
+
+buildGrid();
+updateGrid();
+window.addEventListener("resize", buildGrid);
+
+</script>
+
 </body>
 </html>
